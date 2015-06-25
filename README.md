@@ -1,2 +1,2 @@
 # hucsvm
-Harry's Ultimate Computer System Virtual Machine
+Harry's Ultimate Computer System
