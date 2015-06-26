@@ -30,3 +30,7 @@ func (b *Buffer) WriteBufferToOutput(filename string) error {
 func (b *Buffer) WriteByte(value byte) {
   b.buffer.WriteByte(value)
 }
+
+func (b *Buffer) Write(p []byte) (int, error) {
+  return b.buffer.Write(p)
+}
