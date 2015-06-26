@@ -5,11 +5,22 @@ import (
   "bufio"
   "os"
   "bytes"
+  "unsafe"
   )
 
-const HUCS_ASSEMBLER_VERSION string = "0.1"
-const OUTPUT_VERSION          uint8 = 1
-const FILE_HEADER            string = "HXE"
+const HUCS_ASSEMBLER_VERSION  string = "0.1"
+const VM_VERSION              uint8 = 1
+const MAGIC_NUMBER            string = "HXE"
+
+type HxeHeader struct {
+  version byte
+  codeOffset uint32
+  codeSize uint32
+  dataOffset uint32
+  dataSize uint32
+  exportOffset uint32
+  exportSize uint32
+}
 
 func check(e error) {
     if e != nil {
@@ -76,10 +87,15 @@ func OutputAssembledLine(line string, lineBuf *bytes.Buffer) {
 // WriteOutputHeader writes the file magic number ("HXE")
 // and current vm file version to the buffer
 func WriteOutputHeader(buf *Buffer) {
-  for _, c := range FILE_HEADER {
+  for _, c := range MAGIC_NUMBER {
     buf.WriteByte(byte(c))
   }
-  buf.WriteByte(OUTPUT_VERSION)
+
+  hxeHeader := new(HxeHeader)
+  hxeHeader.version = VM_VERSION
+  hxeHeader.dataOffset = 3 + uint32(unsafe.Sizeof(hxeHeader))
+  hxeHeader.dataSize = 0
+//  hxeHeader.exportOffset = 
 }
 
 // ReadLines reads a whole file into memory
