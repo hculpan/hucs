@@ -7,8 +7,9 @@ import (
   "os"
   )
 
-const OUTPUT_VERSION uint8 = 1
-const FILE_HEADER    string = "HXE"
+const HUCS_ASSEMBLER_VERSION string = "0.1"
+const OUTPUT_VERSION          uint8 = 1
+const FILE_HEADER            string = "HXE"
 
 func check(e error) {
     if e != nil {
@@ -16,17 +17,20 @@ func check(e error) {
     }
 }
 
+// main
 func main() {
-  fmt.Println("Hucs Assembler")
+  fmt.Printf("Hucs Assembler v%s\n", HUCS_ASSEMBLER_VERSION)
 
-  if opts, err := parseCommandLine(); err != nil {
+  if opts, err := ParseCommandLine(); err != nil {
     fmt.Println(err)
-    usage()
+    Usage()
   } else {
-    fmt.Println("input=" + opts.inFilename)
-    fmt.Println("output=" + opts.outFilename)
+    if opts.verbose {
+      fmt.Println("   input=" + opts.inFilename)
+      fmt.Println("  output=" + opts.outFilename)
+    }
 
-    lines, err := readLines(opts.inFilename)
+    lines, err := ReadLines(opts.inFilename)
     check(err);
 
     outputBuffer := new(Buffer)
@@ -43,6 +47,8 @@ func main() {
   }
 }
 
+// WriteOutputHeader writes the file magic number ("HXE")
+// and current vm file version to the buffer
 func WriteOutputHeader(buf *Buffer) {
   for _, c := range FILE_HEADER {
     buf.WriteByte(byte(c))
@@ -50,9 +56,9 @@ func WriteOutputHeader(buf *Buffer) {
   buf.WriteByte(OUTPUT_VERSION)
 }
 
-// readLines reads a whole file into memory
+// ReadLines reads a whole file into memory
 // and returns a slice of its lines.
-func readLines(path string) ([]string, error) {
+func ReadLines(path string) ([]string, error) {
   file, err := os.Open(path)
   if err != nil {
     return nil, err
